@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokémon fitチェックリスト</title>
+    <style>
+table{font-size:13px;border:1px solid #999;border-collapse:collapse;}
+th,td{padding:2px 5px;}
+h1{font-size:100%;}
+p{font-size:80%;}
+.checkbox{margin-bottom:10px;}
+    </style>
+</head>
+<body>
+    <h1>Pokémon fitチェックリスト</h1>
+    <p>チェック状態はこのブラウザに保存されます</p>
+    <div class="checkbox">
+        <label><input type="checkbox" class="areaFilter" value="カントー" checked> カントー</label>
+        <label><input type="checkbox" class="areaFilter" value="ジョウト" checked> ジョウト</label>
+        <label><input type="checkbox" class="areaFilter" value="ホウエン" checked> ホウエン</label>
+        <label><input type="checkbox" class="areaFilter" value="シンオウ" checked> シンオウ</label>
+        <label><input type="checkbox" class="areaFilter" value="イッシュ" checked> イッシュ</label>
+        <label><input type="checkbox" class="areaFilter" value="カロス" checked> カロス</label>
+    </div>
+    <table id="csvTable" border="1">
+        <thead>
+            <tr id="headerRow">
+                <th></th> <!-- 空のセルを追加 -->
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const csvUrl = 'https://raw.githubusercontent.com/addshlab/poke-source/refs/heads/main/csv/pokemon_fit_list.csv';
+            const areaFilters = document.querySelectorAll('.areaFilter');
+
+            // ローカルストレージのデータを取得
+            let savedData = JSON.parse(localStorage.getItem('pokemon_fit_list')) || { checked: [], area: ["カントー", "ジョウト", "ホウエン", "シンオウ", "イッシュ", "カロス"] };
+
+            // フィルタチェックボックスの状態をローカルストレージから復元
+            areaFilters.forEach(filter => {
+                filter.checked = savedData.area.includes(filter.value);
+            });
+
+            fetch(csvUrl)
+                .then(response => response.text())
+                .then(contents => {
+                    const rows = contents.split('\n').filter(row => row.trim() !== ""); // 空行を除外
+                    const tableBody = document.querySelector('#csvTable tbody');
+                    const headerRow = document.getElementById('headerRow');
+                    tableBody.innerHTML = '';
+                    headerRow.innerHTML = '';
+
+                    rows.forEach((row, index) => {
+                        const cells = row.split(',');
+
+                        if (index === 0) {
+                            // ヘッダー行の作成
+                            const emptyTh = document.createElement('th');
+                            headerRow.appendChild(emptyTh); // 空のセルを追加
+                            cells.forEach(cell => {
+                                const th = document.createElement('th');
+                                th.textContent = cell;
+                                headerRow.appendChild(th);
+                            });
+                        } else {
+                            // データ行の作成
+                            const tr = document.createElement('tr');
+                            const tdCheckbox = document.createElement('td');
+                            const checkbox = document.createElement('input');
+                            checkbox.type = 'checkbox';
+                            checkbox.dataset.rowIndex = index;
+
+                            // チェックボックスの状態をローカルストレージから復元
+                            if (savedData.checked.includes(index)) {
+                                checkbox.checked = true;
+                            }
+
+                            checkbox.addEventListener('change', function() {
+                                let checkedRows = savedData.checked;
+                                if (this.checked) {
+                                    checkedRows.push(index);
+                                } else {
+                                    checkedRows = checkedRows.filter(i => i !== index);
+                                }
+                                savedData.checked = checkedRows;
+                                localStorage.setItem('pokemon_fit_list', JSON.stringify(savedData));
+                            });
+
+                            tdCheckbox.appendChild(checkbox);
+                            tr.appendChild(tdCheckbox);
+
+                            cells.forEach(cell => {
+                                const td = document.createElement('td');
+                                td.textContent = cell;
+                                tr.appendChild(td);
+                            });
+
+                            tableBody.appendChild(tr);
+                        }
+                    });
+
+                    // フィルタリング処理を追加
+                    areaFilters.forEach(filter => {
+                        filter.addEventListener('change', function() {
+                            // フィルタの状態を保存
+                            const selectedAreas = Array.from(areaFilters)
+                                .filter(filter => filter.checked)
+                                .map(filter => filter.value);
+                            savedData.area = selectedAreas;
+                            localStorage.setItem('pokemon_fit_list', JSON.stringify(savedData));
+                            filterTable();
+                        });
+                    });
+
+                    function filterTable() {
+                        const selectedAreas = savedData.area;
+
+                        if (selectedAreas.length === 0) {
+                            // エリアが全て未選択の場合、データ行を全て非表示にする
+                            Array.from(tableBody.rows).forEach(row => {
+                                row.style.display = 'none';
+                            });
+                        } else {
+                            // エリアが選択されている場合、フィルタリングを適用
+                            Array.from(tableBody.rows).forEach(row => {
+                                const areaCell = row.cells[3]; // area列の位置に基づく（ヘッダーを含むと4番目）
+                                if (areaCell && !selectedAreas.includes(areaCell.textContent.trim())) {
+                                    row.style.display = 'none';
+                                } else {
+                                    row.style.display = '';
+                                }
+                            });
+                        }
+                    }
+
+                    filterTable(); // 初期状態でフィルタリングを適用
+                });
+        });
+    </script>
+</body>
+</html>
