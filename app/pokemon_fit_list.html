@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon fitチェックリスト</title>
     <style>
-table{font-size:13px;border:1px solid #999;border-collapse:collapse;}
-th,td{padding:2px 5px;}
-h1{font-size:100%;}
-p,li{font-size:80%;}
-.checkbox{margin-bottom:10px;}
+        table{font-size:13px;border:1px solid #999;border-collapse:collapse;}
+        th,td{padding:2px 5px;}
+        h1{font-size:100%;}
+        ul{font-size:70%;margin-bottom:10px;padding:10px 30px;background:#f3b4b4;}
+        p,li{font-size:80%;}
+        .checkbox{margin-bottom:10px;}
     </style>
 </head>
 <body>
@@ -39,7 +40,7 @@ p,li{font-size:80%;}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const csvUrl = 'https://raw.githubusercontent.com/addshlab/poke-source/refs/heads/main/csv/pokemon_fit_list.csv';
+            const csvUrl = 'https://raw.githubusercontent.com/addshlab/poke-source/main/csv/pokemon_fit_list.csv';
             const areaFilters = document.querySelectorAll('.areaFilter');
 
             // ローカルストレージのデータを取得
@@ -51,7 +52,12 @@ p,li{font-size:80%;}
             });
 
             fetch(csvUrl)
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Network response was not ok: ${response.statusText}`);
+                    }
+                    return response.text();
+                })
                 .then(contents => {
                     const rows = contents.split('\n').filter(row => row.trim() !== ""); // 空行を除外
                     const tableBody = document.querySelector('#csvTable tbody');
@@ -66,10 +72,12 @@ p,li{font-size:80%;}
                             // ヘッダー行の作成
                             const emptyTh = document.createElement('th');
                             headerRow.appendChild(emptyTh); // 空のセルを追加
-                            cells.forEach(cell => {
-                                const th = document.createElement('th');
-                                th.textContent = cell;
-                                headerRow.appendChild(th);
+                            cells.forEach((cell, cellIndex) => {
+                                if (cellIndex !== 3 && cellIndex !== 4) { // 'code'と'price'列を除外
+                                    const th = document.createElement('th');
+                                    th.textContent = cell;
+                                    headerRow.appendChild(th);
+                                }
                             });
                         } else {
                             // データ行の作成
@@ -98,10 +106,20 @@ p,li{font-size:80%;}
                             tdCheckbox.appendChild(checkbox);
                             tr.appendChild(tdCheckbox);
 
-                            cells.forEach(cell => {
-                                const td = document.createElement('td');
-                                td.textContent = cell;
-                                tr.appendChild(td);
+                            cells.forEach((cell, cellIndex) => {
+                                if (cellIndex === 1) { // 'name'列
+                                    const td = document.createElement('td');
+                                    const link = document.createElement('a');
+                                    link.href = `https://www.pokemoncenter-online.com/?p_cd=${cells[3]}`; // 'code'をリンクに使用
+                                    link.target = '_blank';
+                                    link.textContent = cell;
+                                    td.appendChild(link);
+                                    tr.appendChild(td);
+                                } else if (cellIndex !== 3 && cellIndex !== 4) { // 'code'と'price'列を除外
+                                    const td = document.createElement('td');
+                                    td.textContent = cell;
+                                    tr.appendChild(td);
+                                }
                             });
 
                             tableBody.appendChild(tr);
@@ -132,7 +150,7 @@ p,li{font-size:80%;}
                         } else {
                             // エリアが選択されている場合、フィルタリングを適用
                             Array.from(tableBody.rows).forEach(row => {
-                                const areaCell = row.cells[3]; // area列の位置に基づく（ヘッダーを含むと4番目）
+                                const areaCell = row.cells[3]; // 'area'列の位置に基づく（ヘッダーを含むと4番目）
                                 if (areaCell && !selectedAreas.includes(areaCell.textContent.trim())) {
                                     row.style.display = 'none';
                                 } else {
@@ -143,6 +161,9 @@ p,li{font-size:80%;}
                     }
 
                     filterTable(); // 初期状態でフィルタリングを適用
+                })
+                .catch(error => {
+                    console.error('CSVの読み込み中にエラーが発生しました:', error);
                 });
         });
     </script>
