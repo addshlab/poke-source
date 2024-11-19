@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon fitチェックリスト</title>
     <style>
+        body{margin:0;padding:0;}
+        #app{margin:10px;}
         table{font-size:13px;border:1px solid #999;border-collapse:collapse;}
         th,td{padding:2px 5px;}
         h1{font-size:100%;}
@@ -14,6 +16,7 @@
     </style>
 </head>
 <body>
+<div id="app">
     <h1>Pokémon fitチェックリスト</h1>
     <ul>
         <li>チェック状態はこのブラウザに保存されます</li>
@@ -37,6 +40,7 @@
         <tbody>
         </tbody>
     </table>
+</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
