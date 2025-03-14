@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pokémon fitチェックリスト</title>
+  <title>>Pokémon fit お迎えチェックリスト</title>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 </head>
 <body>
@@ -22,12 +22,6 @@
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
         </svg>
         <span>このページは非公式です。実際の商品情報が異なる可能性があります</span>
-      </li>
-      <li class="flex items-center space-x-3 rtl:space-x-reverse">
-        <svg class="shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
-        </svg>
-        <span>「黒いレックウザ」はホウエン地方の最後にあります</span>
       </li>
     </ul>
 
@@ -74,13 +68,13 @@
     <div id="currentCount" class="mb-5 text-sm font-medium text-gray-900"></div>
 
     <div class="relative overflow-x-auto sm:rounded-lg">
-      <table id="csvTable" class="w-full text-sm text-center rtl:text-right text-gray-800 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table id="csvTable" class="table-fixed w-full text-sm text-center rtl:text-right text-gray-800 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
           <tr>
-            <th scope="col" class="p-4 w-10">お迎え</th>
-            <th scope="col" class="px-6 py-3 w-25">図鑑番号</th>
-            <th scope="col" class="px-6 py-3">名前</th>
-            <th scope="col" class="px-6 py-3">地方</th>
+            <th scope="col" class="py-5 w-20">お迎え</th>
+            <th scope="col" class="w-20">図鑑番号</th>
+            <th scope="col" class="">名前</th>
+            <th scope="col" class="">地方</th>
           </tr>
         </thead>
         <tbody>
