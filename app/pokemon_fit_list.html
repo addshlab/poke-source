@@ -4,44 +4,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokémon fitチェックリスト</title>
-    <style>
-        body{margin:0;padding:0;}
-        #app{margin:10px;}
-        table{font-size:13px;border:1px solid #999;border-collapse:collapse;}
-        th,td{padding:2px 5px;}
-        h1{font-size:100%;}
-        ul{font-size:70%;margin-bottom:10px;padding:10px 30px;background:#f3b4b4;}
-        p,li{font-size:80%;}
-        .checkbox{margin-bottom:10px;}
-    </style>
+    <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 </head>
 <body>
-<div id="app">
-    <h1>Pokémon fitチェックリスト</h1>
-    <ul>
-        <li>チェック状態はこのブラウザに保存されます。保存状態の永続は保証しません</li>
-        <li>このページは手動によりメンテナンスされています。このページの情報と実際の商品情報が異なる可能性があります</li>
-        <li>黒いレックウザの商品名などが他と異なるため暫定的に「すべてのリストの最後に配置」「ホウエンでの絞り込みに対応」としています</li>
-    </ul>
-    <div class="checkbox">
-        <label><input type="checkbox" class="areaFilter" value="カントー" checked> カントー</label>
-        <label><input type="checkbox" class="areaFilter" value="ジョウト" checked> ジョウト</label>
-        <label><input type="checkbox" class="areaFilter" value="ホウエン" checked> ホウエン</label>
-        <label><input type="checkbox" class="areaFilter" value="シンオウ" checked> シンオウ</label>
-        <label><input type="checkbox" class="areaFilter" value="イッシュ" checked> イッシュ</label>
-        <label><input type="checkbox" class="areaFilter" value="カロス" checked> カロス</label>
-    </div>
-    <table id="csvTable" border="1">
-        <thead>
-            <tr id="headerRow">
-                <th></th> <!-- 空のセルを追加 -->
+<div id="app" class="m-5">
+
+<h1 class="font-bold mb-5 text-xl">Pokémon fitチェックリスト</h1>
+
+<ul class="space-y-4 text-left text-gray-700 dark:text-gray-400 mb-5 text-xs">
+    <li class="flex items-center space-x-3 rtl:space-x-reverse">
+         <svg class="shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+         </svg>
+        <span>チェック状態はこのブラウザに保存されます。状態の永続は保証しません</span>
+    </li>
+    <li class="flex items-center space-x-3 rtl:space-x-reverse">
+         <svg class="shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+         </svg>
+        <span>実際の商品情報が異なる可能性があります</span>
+    </li>
+    <li class="flex items-center space-x-3 rtl:space-x-reverse">
+         <svg class="shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
+         </svg>
+        <span>「黒いレックウザ」はホウエン地方の最後にあります</span>
+    </li>
+</ul>
+
+<ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white  mb-5">
+    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <input id="kanto-checkbox-list" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 areaFilter" value="カントー" checked>
+            <label for="kanto-checkbox-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">カントー</label>
+        </div>
+    </li>
+    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <input id="johto-checkbox-list" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 areaFilter" value="ジョウト" checked>
+            <label for="johto-checkbox-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ジョウト</label>
+        </div>
+    </li>
+    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <input id="hoenn-checkbox-list" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 areaFilter" value="ホウエン" checked>
+            <label for="hoenn-checkbox-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">ホウエン</label>
+        </div>
+    </li>
+    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <input id="sinnoh-checkbox-list" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 areaFilter" value="シンオウ" checked>
+            <label for="sinnoh-checkbox-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">シンオウ</label>
+        </div>
+    </li>
+    <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <input id="unova-checkbox-list" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 areaFilter" value="イッシュ" checked>
+            <label for="unova-checkbox-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">イッシュ</label>
+        </div>
+    </li>
+    <li class="w-full dark:border-gray-600">
+        <div class="flex items-center ps-3">
+            <input id="kalos-checkbox-list" type="checkbox" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500 areaFilter" value="カロス" checked>
+            <label for="kalos-checkbox-list" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">カロス</label>
+        </div>
+    </li>
+</ul>
+
+
+<!--テーブルここから-->
+<div class="relative overflow-x-auto sm:rounded-lg">
+    <table id="csvTable" class="w-full text-sm text-center rtl:text-right text-gray-800 dark:text-gray-400 ">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+                <th scope="col" class="p-4 w-10">所持</th>
+                <th scope="col" class="px-6 py-3 w-25">図鑑番号</th>
+                <th scope="col" class="px-6 py-3">名前</th>
+                <th scope="col" class="px-6 py-3">地方</th>
             </tr>
         </thead>
         <tbody>
+          <tr id="headerRow"></tr>
         </tbody>
     </table>
 </div>
+<!--テーブルここまで-->
 
+</div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const csvUrl = 'https://raw.githubusercontent.com/addshlab/poke-source/main/csv/pokemon_fit_list.csv';
@@ -72,22 +121,16 @@
                     rows.forEach((row, index) => {
                         const cells = row.split(',');
 
-                        if (index === 0) {
-                            // ヘッダー行の作成
-                            const emptyTh = document.createElement('th');
-                            headerRow.appendChild(emptyTh); // 空のセルを追加
-                            cells.forEach((cell, cellIndex) => {
-                                if (cellIndex !== 3 && cellIndex !== 4) { // 'code'と'price'列を除外
-                                    const th = document.createElement('th');
-                                    th.textContent = cell;
-                                    headerRow.appendChild(th);
-                                }
-                            });
-                        } else {
+
                             // データ行の作成
                             const tr = document.createElement('tr');
                             const tdCheckbox = document.createElement('td');
                             const checkbox = document.createElement('input');
+
+                            tr.classList.add("bg-white", "border-b", "dark:bg-gray-800", "dark:border-gray-700", "border-gray-200", "hover:bg-gray-50", "dark:hover:bg-gray-600", "text-center");
+                            tdCheckbox.classList.add("px-6", "py-4");
+                            checkbox.classList.add("w-4", "h-4", "text-blue-600", "bg-gray-100", "border-gray-300", "rounded-sm", "focus:ring-blue-500", "dark:focus:ring-blue-600", "dark:ring-offset-gray-800", "dark:focus:ring-offset-gray-800", "focus:ring-2", "dark:bg-gray-700", "dark:border-gray-600", "text-center");
+
                             checkbox.type = 'checkbox';
 
                             // チェックボックスの状態をローカルストレージから復元
@@ -127,7 +170,6 @@
                             });
 
                             tableBody.appendChild(tr);
-                        }
                     });
 
                     // フィルタリング処理を追加
