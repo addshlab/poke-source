@@ -10,7 +10,7 @@
   <div id="app" class="m-5">
     <h1 class="font-bold mb-5 text-xl">Pokémon fit お迎えチェックリスト</h1>
 
-    <ul class="space-y-4 text-left text-gray-700 dark:text-gray-400 mb-5 text-xs">
+    <ul class="space-y-4 text-left text-gray-800 mb-5 text-xs">
       <li class="flex items-center space-x-3 rtl:space-x-reverse">
         <svg class="shrink-0 w-3.5 h-3.5 text-green-500 dark:text-green-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 16 12">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5.917 5.724 10.5 15 1.5"/>
@@ -24,6 +24,8 @@
         <span>このページは非公式です。実際の商品情報が異なる可能性があります</span>
       </li>
     </ul>
+
+    <div class="mb-5 text-sm font-medium text-gray-900">表示する地方</div>
 
     <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white mb-5">
       <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
@@ -64,12 +66,11 @@
       </li>
     </ul>
 
-    <!-- 変更: エリア選択欄の下にお迎えした総数を表示 -->
     <div id="currentCount" class="mb-5 text-sm font-medium text-gray-900"></div>
 
     <div class="relative overflow-x-auto sm:rounded-lg">
-      <table id="csvTable" class="table-fixed w-full text-sm text-center rtl:text-right text-gray-800 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 ">
+      <table id="csvTable" class="table-fixed w-full text-sm text-center rtl:text-right text-gray-800 dark:text-white">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-white">
           <tr>
             <th scope="col" class="py-5 w-20">お迎え</th>
             <th scope="col" class="w-20">図鑑番号</th>
