@@ -125,7 +125,7 @@
             checkbox.type = 'checkbox';
 
             // チェックボックスの状態をローカルストレージから復元
-            const uniqueKey = `${cells[0]}_${cells[3]}`; // {number}_{code}の形式
+            const uniqueKey = `${cells[0]}-${cells[1]}`; // {number}_{variation}の形式
             if (savedData.checked.includes(uniqueKey)) {
               checkbox.checked = true;
             }
@@ -147,15 +147,15 @@
             tr.appendChild(tdCheckbox);
 
             cells.forEach((cell, cellIndex) => {
-              if (cellIndex === 1) { // '名前'列としてリンク表示
+              if (cellIndex === 2) { // '名前'列としてリンク表示
                 const td = document.createElement('td');
                 const link = document.createElement('a');
-                link.href = `https://www.pokemoncenter-online.com/${cells[3]}.html`; // 'code'をリンクに使用
+                link.href = `https://www.pokemoncenter-online.com/${cells[4]}.html`; // 'code'をリンクに使用
                 link.target = '_blank';
                 link.textContent = cell;
                 td.appendChild(link);
                 tr.appendChild(td);
-              } else if (cellIndex !== 3 && cellIndex !== 4) { // 'code'と'price'列を除外
+              } else if (cellIndex !== 1 && cellIndex !== 4 && cellIndex !== 5) { // 'code'と'price'列を除外
                 const td = document.createElement('td');
                 td.textContent = cell;
                 tr.appendChild(td);
