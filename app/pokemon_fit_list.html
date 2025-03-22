@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>>Pokémon fit お迎えチェックリスト</title>
+  <title>Pokémon fit お迎えチェックリスト</title>
   <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
 </head>
 <body>
@@ -89,10 +89,10 @@
       const csvUrl = 'https://raw.githubusercontent.com/addshlab/poke-source/main/csv/pokemon_fit_list.csv';
       const areaFilters = document.querySelectorAll('.areaFilter');
 
-      // ローカルストレージのデータを取得
-      let savedData = JSON.parse(localStorage.getItem('pokemon_fit_list')) || { checked: [], area: ["カントー", "ジョウト", "ホウエン", "シンオウ", "イッシュ", "カロス"] };
+      // ローカルストレージからデータを取得
+      let savedData = JSON.parse(localStorage.getItem('pokemon_fit_list')) || { checked: "", area: ["カントー", "ジョウト", "ホウエン", "シンオウ", "イッシュ", "カロス"], lineLength: 0 };
 
-      // フィルタチェックボックスの状態をローカルストレージから復元
+      // フィルタチェックボックスの状態を復元
       areaFilters.forEach(filter => {
         filter.checked = savedData.area.includes(filter.value);
       });
@@ -105,15 +105,27 @@
           return response.text();
         })
         .then(contents => {
-          const rows = contents.split('\n').filter(row => row.trim() !== ""); // 空行を除外
+          const rows = contents.split('\n').filter(row => row.trim() !== "");
+          // ヘッダー行を除外してデータ行のみを取得
+          const dataRows = rows.slice(1);
           const tableBody = document.querySelector('#csvTable tbody');
           const headerRow = document.getElementById('headerRow');
           tableBody.innerHTML = '';
           headerRow.innerHTML = '';
 
-          rows.forEach((row, index) => {
+          const newDataLength = dataRows.length;
+
+          // lineLengthが未設定または新たな行数が既存より多い場合に対応
+          if (savedData.lineLength < newDataLength) {
+            const missingCount = newDataLength - savedData.lineLength;
+            savedData.checked = savedData.checked + "0".repeat(missingCount);
+            savedData.lineLength = newDataLength;
+            localStorage.setItem('pokemon_fit_list', JSON.stringify(savedData));
+          }
+
+          // データ行に対してチェック状態を設定し、テーブルを生成
+          dataRows.forEach((row, index) => {
             const cells = row.split(',');
-            // データ行の作成
             const tr = document.createElement('tr');
             const tdCheckbox = document.createElement('td');
             const checkbox = document.createElement('input');
@@ -124,20 +136,15 @@
 
             checkbox.type = 'checkbox';
 
-            // チェックボックスの状態をローカルストレージから復元
-            const uniqueKey = `${cells[0]}-${cells[1]}`; // {number}_{variation}の形式
-            if (savedData.checked.includes(uniqueKey)) {
+            // 保存されたチェック状態の文字列から状態を復元（'1'ならチェック済み）
+            if (savedData.checked.charAt(index) === '1') {
               checkbox.checked = true;
             }
 
             checkbox.addEventListener('change', function() {
-              let checkedRows = savedData.checked;
-              if (this.checked) {
-                checkedRows.push(uniqueKey);
-              } else {
-                checkedRows = checkedRows.filter(key => key !== uniqueKey);
-              }
-              savedData.checked = checkedRows;
+              let checkArray = savedData.checked.split("");
+              checkArray[index] = this.checked ? "1" : "0";
+              savedData.checked = checkArray.join("");
               localStorage.setItem('pokemon_fit_list', JSON.stringify(savedData));
               updateTotalCount();
               updateAreaCounts();
@@ -147,15 +154,16 @@
             tr.appendChild(tdCheckbox);
 
             cells.forEach((cell, cellIndex) => {
-              if (cellIndex === 2) { // '名前'列としてリンク表示
+              // '名前'列をリンクとして表示（'code' をリンクに利用）
+              if (cellIndex === 2) {
                 const td = document.createElement('td');
                 const link = document.createElement('a');
-                link.href = `https://www.pokemoncenter-online.com/${cells[4]}.html`; // 'code'をリンクに使用
+                link.href = `https://www.pokemoncenter-online.com/${cells[4]}.html`;
                 link.target = '_blank';
                 link.textContent = cell;
                 td.appendChild(link);
                 tr.appendChild(td);
-              } else if (cellIndex !== 1 && cellIndex !== 4 && cellIndex !== 5) { // 'code'と'price'列を除外
+              } else if (cellIndex !== 0 && cellIndex !== 4) {
                 const td = document.createElement('td');
                 td.textContent = cell;
                 tr.appendChild(td);
@@ -165,10 +173,9 @@
             tableBody.appendChild(tr);
           });
 
-          // お迎えした総数（フィルタ状態に関係なく全体のチェック済み件数）を更新する関数
+          // チェック済み総数の更新
           function updateTotalCount() {
             let count = 0;
-            // 全ての行を対象にチェックされた件数を集計
             Array.from(tableBody.rows).forEach(row => {
               const checkbox = row.querySelector('input[type="checkbox"]');
               if (checkbox && checkbox.checked) {
@@ -178,29 +185,22 @@
             document.getElementById('currentCount').textContent = 'お迎えした総数: ' + count;
           }
 
-          // 各エリアのチェックボックスラベルに表示する「お迎え数」を更新する関数
+          // 各エリアのチェック数の更新
           function updateAreaCounts() {
-            // 初期化: 各エリアの件数を0に設定
             const areaCounts = {};
             areaFilters.forEach(filter => {
               areaCounts[filter.value] = 0;
             });
-            // 各行を走査して、チェックが入っている行のエリア毎にカウント
             Array.from(tableBody.rows).forEach(row => {
               const rowCheckbox = row.querySelector('input[type="checkbox"]');
               if (rowCheckbox && rowCheckbox.checked) {
-                const areaCell = row.cells[3]; // 「地方」列
+                const areaCell = row.cells[3];
                 if (areaCell) {
                   const areaName = areaCell.textContent.trim();
-                  if (areaCounts.hasOwnProperty(areaName)) {
-                    areaCounts[areaName]++;
-                  } else {
-                    areaCounts[areaName] = 1;
-                  }
+                  areaCounts[areaName] = (areaCounts[areaName] || 0) + 1;
                 }
               }
             });
-            // 各エリアのラベルを更新
             areaFilters.forEach(filter => {
               const label = document.querySelector('label[for="' + filter.id + '"]');
               if (label) {
@@ -209,10 +209,9 @@
             });
           }
 
-          // フィルタリング処理を追加
+          // フィルタ処理
           areaFilters.forEach(filter => {
             filter.addEventListener('change', function() {
-              // フィルタの状態を保存
               const selectedAreas = Array.from(areaFilters)
                 .filter(filter => filter.checked)
                 .map(filter => filter.value);
@@ -231,11 +230,7 @@
             } else {
               Array.from(tableBody.rows).forEach(row => {
                 const areaCell = row.cells[3];
-                if (areaCell && !selectedAreas.includes(areaCell.textContent.trim())) {
-                  row.style.display = 'none';
-                } else {
-                  row.style.display = '';
-                }
+                row.style.display = (areaCell && selectedAreas.includes(areaCell.textContent.trim())) ? '' : 'none';
               });
             }
             updateTotalCount();
