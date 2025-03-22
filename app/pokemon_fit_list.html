@@ -161,6 +161,7 @@
                 link.href = `https://www.pokemoncenter-online.com/${cells[4]}.html`;
                 link.target = '_blank';
                 link.textContent = cell;
+                link.classList.add("underline");
                 td.appendChild(link);
                 tr.appendChild(td);
               } else if (cellIndex !== 0 && cellIndex !== 4) {
